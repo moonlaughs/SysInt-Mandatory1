@@ -18,8 +18,10 @@ app.get('/test', (req, res) =>{
 
 
 app.post('/nemId', xmlparser({trim: false, explicitArray: false}), async(req, res, next) =>{
-    let cpr = req.body.person.cprnumber[0];
-    let email = req.body.person.email[0];
+    // let cpr = req.body.person.cprnumber[0];
+    // let email = req.body.person.email[0];
+    let cpr = req.body.cprnumber;
+    let email = req.body.email;
     let nemId = '';
     axios.post('http://localhost:8088/generate-nemId', {cpr: cpr, email: email}).then(response =>{
         nemId = response.data.nemId;
