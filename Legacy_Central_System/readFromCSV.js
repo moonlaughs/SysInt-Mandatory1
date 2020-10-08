@@ -3,12 +3,18 @@ const fs = require('fs');
 
 var builder = require('xmlbuilder');
 
+<<<<<<< HEAD
 //const express = require('express');
 const axios = require('axios');
 
 const msgpack = require('msgpack-lite');
 
 //var app = express();
+=======
+const msgpack = require('msgpack-lite');
+
+var request = require('request');
+>>>>>>> dc06e9a87e16d8f2df684bdad29f70ac99204d29
 
 var FirstName;
 var LastName;
@@ -44,6 +50,7 @@ fs.createReadStream('../Main_System/people.csv')
 
 function generateXml(personData) {
     console.log("Generating XML...")
+<<<<<<< HEAD
     var root = builder.create('Person')
     var item = root.ele('FirstName', {}, personData.FirstName);
     var item2 = root.ele('LastName', {}, personData.LastName);
@@ -51,6 +58,15 @@ function generateXml(personData) {
     var item4 = root.ele('Email', {}, personData.Email);
     var xml = root.end({ pretty: true });
     console.log(xml);
+=======
+    var person = builder.create('Person')
+    var firstname = person.ele('FirstName', {}, personData.FirstName);
+    var lastname = person.ele('LastName', {}, personData.LastName);
+    var cprnumber = person.ele('CprNumber', {}, personData.CprNumber);
+    var email = person.ele('Email', {}, personData.Email);
+    var xml = person.end({ pretty: true });
+
+>>>>>>> dc06e9a87e16d8f2df684bdad29f70ac99204d29
     sendPost(xml, personData);
 }
 
@@ -62,6 +78,7 @@ function generateCpr(dateOfBirth) {
 }
 
 function sendPost(body, personData) {
+<<<<<<< HEAD
     console.log("preparing for snding request...")
 
     axios.post('http://localhost:8080/nemID', body).then(response => {
@@ -93,3 +110,35 @@ function sendPost(body, personData) {
         }
     });
 }
+=======
+    console.log("preparing for sending request...")
+
+    request.post({
+        headers: { 'content-type': 'text/xml' }
+        , url: 'http://localhost:8080/nemID', body: body
+    }
+        , function (error, response, body) {
+            console.log(body) //not fully working
+
+            var jsonObject = {
+                "f_name": personData.FirstName,
+                "l_name": personData.LastName,
+                "birth_date": personData.DateOfBirth,
+                "email": personData.Email,
+                "country": personData.Country,
+                "phone": personData.Phone,
+                "address": personData.Address,
+                "CPR": personData.CprNumber,
+                "NemID": body
+            }
+            var serializedObject = JSON.stringify(jsonObject);
+
+            var writeStream = fs.createWriteStream(`${jsonObject.CPR}.msgpack`);
+            var encodeStream = msgpack.createEncodeStream();
+            encodeStream.pipe(writeStream);
+            encodeStream.write(serializedObject);
+            encodeStream.end();
+
+        });
+}
+>>>>>>> dc06e9a87e16d8f2df684bdad29f70ac99204d29
