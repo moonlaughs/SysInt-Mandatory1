@@ -66,7 +66,9 @@ function sendPost(body, personData) {
         , url: 'http://localhost:8080/nemID', body: body
     }
         , function (error, response, body) {
-            console.log(body) //not fully working
+            console.log(request.Response) //not fully working
+
+            var nemidClean = body.replace('\"}','');
 
             var jsonObject = {
                 "f_name": personData.FirstName,
@@ -77,7 +79,7 @@ function sendPost(body, personData) {
                 "phone": personData.Phone,
                 "address": personData.Address,
                 "CPR": personData.CprNumber,
-                "NemID": body
+                "NemID": nemidClean.replace('{\"nemID\":\"','')
             }
             var serializedObject = JSON.stringify(jsonObject);
 
